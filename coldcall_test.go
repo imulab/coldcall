@@ -21,14 +21,18 @@ func TestRequest(t *testing.T) {
 		}
 	)
 
-	req, err := coldcall.Post(context.Background(),
-		addr.String("http://httpbin.org/post"),
+	req, err := coldcall.Post(context.Background(), "http://httpbin.org/post",
+		addr.WithQueryMap(map[string]string{
+			"foo": "bar",
+		}),
 		header.ContentType(header.ContentTypeApplicationJSON),
 		body.JSONMarshal(Greeting{Message: "hello world"}),
 	)
 	if err != nil {
 		t.Error(err)
 	}
+
+	println(req.URL.String())
 
 	var newEcho coldcall.Constructor = func() interface{} {
 		return new(Echo)

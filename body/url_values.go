@@ -13,3 +13,8 @@ import (
 func URLValuesEncode(values url.Values) coldcall.Option {
 	return Read(strings.NewReader(values.Encode()))
 }
+
+// URLValuesMapEncode is a convenience wrapper around URLValuesEncode using map to construct url.Values.
+func URLValuesMapEncode(values map[string]string) coldcall.Option {
+	return URLValuesEncode(coldcall.URLValues(values))
+}

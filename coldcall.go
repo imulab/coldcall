@@ -4,6 +4,7 @@ import (
 	"context"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 type (
@@ -36,8 +37,8 @@ type (
 )
 
 // Request constructs the http.Request object with the method and given options.
-func Request(ctx context.Context, method string, options ...Option) (*http.Request, error) {
-	r, err := http.NewRequestWithContext(ctx, method, "", nil)
+func Request(ctx context.Context, method string, url string, options ...Option) (*http.Request, error) {
+	r, err := http.NewRequestWithContext(ctx, method, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -52,28 +53,28 @@ func Request(ctx context.Context, method string, options ...Option) (*http.Reque
 }
 
 // Get is a convenient wrapper for Request with the GET method.
-func Get(ctx context.Context, options ...Option) (*http.Request, error) {
-	return Request(ctx, http.MethodGet, options...)
+func Get(ctx context.Context, url string, options ...Option) (*http.Request, error) {
+	return Request(ctx, http.MethodGet, url, options...)
 }
 
 // Post is a convenient wrapper for Request with the POST method.
-func Post(ctx context.Context, options ...Option) (*http.Request, error) {
-	return Request(ctx, http.MethodPost, options...)
+func Post(ctx context.Context, url string, options ...Option) (*http.Request, error) {
+	return Request(ctx, http.MethodPost, url, options...)
 }
 
 // Put is a convenient wrapper for Request with the PUT method.
-func Put(ctx context.Context, options ...Option) (*http.Request, error) {
-	return Request(ctx, http.MethodPut, options...)
+func Put(ctx context.Context, url string, options ...Option) (*http.Request, error) {
+	return Request(ctx, http.MethodPut, url, options...)
 }
 
 // Patch is a convenient wrapper for Request with the PATCH method.
-func Patch(ctx context.Context, options ...Option) (*http.Request, error) {
-	return Request(ctx, http.MethodPatch, options...)
+func Patch(ctx context.Context, url string, options ...Option) (*http.Request, error) {
+	return Request(ctx, http.MethodPatch, url, options...)
 }
 
 // Delete is a convenient wrapper for Request with the DELETE method.
-func Delete(ctx context.Context, options ...Option) (*http.Request, error) {
-	return Request(ctx, http.MethodDelete, options...)
+func Delete(ctx context.Context, url string, options ...Option) (*http.Request, error) {
+	return Request(ctx, http.MethodDelete, url, options...)
 }
 
 // Response reads the http.Response and returns a builder object for further configuration.
@@ -165,4 +166,13 @@ func Produce(constructor Constructor, unmarshaler Unmarshaler) Producer {
 type produceOnCondition struct {
 	condition Condition
 	producer  Producer
+}
+
+// URLValues is a convenient function to construct url.Values with a map
+func URLValues(kv map[string]string) url.Values {
+	values := url.Values{}
+	for k, v := range kv {
+		values.Set(k, v)
+	}
+	return values
 }
